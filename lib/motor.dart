@@ -65,7 +65,7 @@ class _MotorState extends State<Motor> {
                 padding: const EdgeInsets.only(left: 0),
                 child: Column(
                   children: [
-                    const Text('Dev'),
+                    const Text('Dev1'),
                     Switch(
                       value: switchValue1,
                       onChanged: (value) {
