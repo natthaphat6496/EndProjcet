@@ -17,13 +17,14 @@ class _MyHomePageState extends State<MyHomePage> {
   late DatabaseReference speechtotext;
   late DatabaseReference _getfirebase;
   late DatabaseReference _getfirebase1;
+  late DatabaseReference _getfirebase2;
   final FlutterTts flutterTts = FlutterTts();
   SpeechToText _speechToText = SpeechToText();
   bool _isListening = false;
   String text = 'Press the button and start speaking';
   String dataFromFirebase = "No Data";
   String dataFromFirebase1 = "No Data";
-
+  String dataFromFirebase2 = "No Data";
   @override
   void initState() {
     super.initState();
@@ -31,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _speechToText = SpeechToText();
     _getfirebase = FirebaseDatabase.instance.ref().child("index/tem");
     _getfirebase1 = FirebaseDatabase.instance.ref().child("index/humu");
+    _getfirebase2 = FirebaseDatabase.instance.ref().child("index/humuEar");
 
     _getfirebase.onValue.listen((DatabaseEvent event) {
       if (event.snapshot.value != null) {
@@ -46,6 +48,14 @@ class _MyHomePageState extends State<MyHomePage> {
         var data = event.snapshot.value;
         setState(() {
           dataFromFirebase1 = data.toString();
+        });
+      }
+    });
+    _getfirebase2.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        var data = event.snapshot.value;
+        setState(() {
+          dataFromFirebase2 = data.toString();
         });
       }
     });
@@ -143,12 +153,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'ความชื้น : $dataFromFirebase1 % ',
+                            'ความชื้นในอากาศ : $dataFromFirebase1 % ',
                             style: const TextStyle(fontSize: 18),
                           ),
                           ElevatedButton(
                             onPressed: () => speak(
-                                'ขณะนี้ความชื้นเท่ากับ $dataFromFirebase1 %'),
+                                'ขณะนี้ความชื้นในอากาศเท่ากับ $dataFromFirebase1 %'),
                             child: Text('Read'),
                           ),
                         ],
@@ -160,12 +170,28 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'อุณหภมิ : $dataFromFirebase°C ',
+                              'อุณหภูมิ : $dataFromFirebase °C ',
                               style: const TextStyle(fontSize: 18),
                             ),
                             ElevatedButton(
                               onPressed: () => speak(
-                                  'ขณะนี้อุณหภูมิเท่ากับ $dataFromFirebase °C'),
+                                  'ขณะนี้อุณหภูมิห้องเท่ากับ $dataFromFirebase °C'),
+                              child: Text('Read'),
+                            ),
+                          ],
+                        )),
+                    Container(
+                        color: const Color.fromARGB(255, 209, 208, 208),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'ความชื้นในดิน : $dataFromFirebase2 % ',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => speak(
+                                  'ขณะนี้ความชื้นในดินเท่ากับ $dataFromFirebase2 %'),
                               child: Text('Read'),
                             ),
                           ],

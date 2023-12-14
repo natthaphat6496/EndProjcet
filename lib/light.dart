@@ -75,7 +75,7 @@ class _LightState extends State<Light> {
                 padding: const EdgeInsets.only(left: 0),
                 child: Column(
                   children: [
-                    const Text('Dev'),
+                    const Text('DevL'),
                     Switch(
                       value: switchValue,
                       onChanged: (value) {
