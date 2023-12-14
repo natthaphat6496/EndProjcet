@@ -43,6 +43,7 @@ dependencies:
   syncfusion_flutter_gauges: ^23.2.7
   riverpod: ^2.4.9
   provider: ^6.1.1
+  firebase: ^9.0.0
   
 dev_dependencies:
   flutter_test:

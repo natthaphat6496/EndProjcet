@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:new_page/setting.dart';
 import 'package:new_page/temperature.dart';
 import 'package:new_page/motor.dart';
 import 'package:new_page/light.dart';
+//import 'package:new_page/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -18,6 +20,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late DatabaseReference _getfirebase;
   late DatabaseReference _getfirebase1;
   late DatabaseReference _getfirebase2;
+  final TextEditingController ssidController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final FlutterTts flutterTts = FlutterTts();
   SpeechToText _speechToText = SpeechToText();
   bool _isListening = false;
@@ -126,16 +130,42 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width,
-                height: 50,
                 color: const Color.fromARGB(255, 211, 211, 211),
-                child: const Center(
-                  child: Text(
-                    'Smart Farm',
-                    style: TextStyle(
-                      fontSize: 25,
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 100),
+                      child: const Center(
+                        child: Text(
+                          'Smart Farm',
+                          style: TextStyle(
+                            fontSize: 25,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      margin: EdgeInsets.only(left: 50),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Setting()));
+                            },
+                            icon: const Icon(
+                              Icons.settings,
+                              color: Colors.black,
+                              size: 36.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ],
