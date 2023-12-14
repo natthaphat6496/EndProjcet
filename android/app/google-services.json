@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "535070244940",
+    "firebase_url": "https://endproject-3d15d-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "endproject-3d15d",
+    "storage_bucket": "endproject-3d15d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:535070244940:android:37110a8aaaa83206c8f4e9",
+        "android_client_info": {
+          "package_name": "com.example.new_page"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrNFZzd6VT8uehFWrGiBsWP5ITPkwOyRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
