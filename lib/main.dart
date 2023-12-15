@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'index.dart';
-import 'package:new_page/state_provider.dart';
+import 'package:new_page/state_service.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

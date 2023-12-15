@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:new_page/state_provider.dart';
+import 'package:new_page/state_service.dart';
 import 'package:provider/provider.dart';
 
 class Motor extends StatefulWidget {

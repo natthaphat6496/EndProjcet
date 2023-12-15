@@ -1,7 +1,8 @@
+// ignore_for_file: unnecessary_cast
+
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:new_page/state_provider.dart';
-import 'package:provider/provider.dart';
 
 class Light extends StatefulWidget {
   @override
@@ -9,31 +10,38 @@ class Light extends StatefulWidget {
 }
 
 class _LightState extends State<Light> {
+  late DatabaseReference setDev;
   late DatabaseReference setSTRef;
   late DatabaseReference setSPRef;
-  late DatabaseReference setDev;
-  late DatabaseReference getDev;
-  String formattedStartTime = '';
-  String formattedStopTime = '';
-  String dataFromFirebase = '';
+
   final bool _isSwitchOn = false;
   final List<String> _items = [];
   final List<bool> _itemSwitches = [];
 
+  String formattedStartTime = '';
+  String formattedStopTime = '';
+
+  _LightState();
+
   @override
   void initState() {
     super.initState();
-    setSTRef = FirebaseDatabase.instance.ref().child('Light/set_start_time');
-    setSPRef = FirebaseDatabase.instance.ref().child('Light/set_stop_time');
-    setDev = FirebaseDatabase.instance.ref().child('Light/Dev');
-    getDev = FirebaseDatabase.instance.ref().child('Light/Dev');
+    setDev = FirebaseDatabase.instance.ref().child('Light');
+    setSTRef = FirebaseDatabase.instance.ref().child('Time/set/start_time');
+    setSPRef = FirebaseDatabase.instance.ref().child('Time/set/stop_time');
 
-    getDev.onValue.listen((DatabaseEvent event) {
+    setDev.once().then((DatabaseEvent event) {
       if (event.snapshot.value != null) {
-        var data = event.snapshot.value;
-        setState(() {
-          dataFromFirebase = data.toString();
-        });
+        Map<dynamic, dynamic>? data =
+            event.snapshot.value as Map<dynamic, dynamic>?;
+        if (data != null) {
+          data.forEach((key, value) {
+            setState(() {
+              _items.add(key);
+              _itemSwitches.add(value['switchValue'] == 1);
+            });
+          });
+        }
       }
     });
     setSTRef.onValue.listen((event) {
@@ -44,7 +52,6 @@ class _LightState extends State<Light> {
         });
       }
     });
-
     setSPRef.onValue.listen((event) {
       var snapshot = event.snapshot;
       if (snapshot.value != null) {
@@ -55,10 +62,28 @@ class _LightState extends State<Light> {
     });
   }
 
+  Future<void> _selectTime(BuildContext context, DatabaseReference ref) async {
+    TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (selectedTime != null) {
+      String formattedTime =
+          '${selectedTime.hour}:${selectedTime.minute.toString().padLeft(2, '0')}';
+      ref.set(formattedTime);
+    }
+  }
+
+  void removeItem(int index) {
+    setState(() {
+      String removedItemName = _items.removeAt(index);
+      _itemSwitches.removeAt(index);
+      setDev.child(removedItemName).remove();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final stateService = Provider.of<StateService>(context);
-    final switchValue = stateService.switchValue;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -72,27 +97,10 @@ class _LightState extends State<Light> {
       body: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Container(
-                margin: EdgeInsets.only(left: 150),
-                child: Column(
-                  children: [
-                    const Text('DevL'),
-                    Switch(
-                      value: switchValue,
-                      onChanged: (value) {
-                        stateService.switchValue = value;
-                        setDev.set(value ? 1 : 0);
-                      },
-                      activeColor: switchValue ? Colors.green : Colors.red,
-                    ),
-                    Text(switchValue ? 'ON' : 'OFF')
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: 100),
+                margin: const EdgeInsets.only(right: 20),
                 child: Row(
                   children: [
                     ElevatedButton(
@@ -103,12 +111,12 @@ class _LightState extends State<Light> {
                             _items.add(ledName);
                             _itemSwitches.add(false);
                             setDev.child(ledName).set({
-                              'switchValue': 0,
+                              'Value': 0,
                             });
                           });
                         } else {}
                       },
-                      child: const Icon(Icons.add),
+                      child: const Icon(Icons.add_circle_outline),
                     ),
                   ],
                 ),
@@ -118,54 +126,82 @@ class _LightState extends State<Light> {
           for (int i = 0; i < _items.length; i++)
             ListTile(
               title: Text(_items[i]),
-              trailing: Switch(
-                value: _itemSwitches[i],
-                onChanged: (value) {
-                  setState(() {
-                    _itemSwitches[i] = value;
-                  });
-                  setDev.child(_items[i]).update({
-                    'switchValue': value ? 1 : 0,
-                  });
-                },
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (i < _itemSwitches.length)
+                    Switch(
+                      value: _itemSwitches[i],
+                      onChanged: (value) {
+                        setState(() {
+                          _itemSwitches[i] = value;
+                        });
+                        setDev.child(_items[i]).update({
+                          'Value': value ? 1 : 0,
+                        });
+                      },
+                    ),
+                  if (i < _itemSwitches.length) // Check the bounds
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        removeItem(i);
+                      },
+                    ),
+                ],
               ),
             ),
-          buildTimeSettingButton(
-              'Set Start Time', setSTRef, formattedStartTime),
-          buildTimeSettingButton('Set Stop Time', setSPRef, formattedStopTime),
-          // สร้างปุ่ม Switch สำหรับแต่ละรายการ
+          Column(
+            children: [
+              Container(
+                child: Row(
+                  children: [
+                    buildTimeSettingButton(
+                      'StartTime',
+                      setSTRef,
+                      formattedStartTime,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                child: Row(
+                  children: [
+                    buildTimeSettingButton(
+                      'StopTime',
+                      setSPRef,
+                      formattedStopTime,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
         ],
       ),
     );
   }
 
   Widget buildTimeSettingButton(
-      String buttonText, DatabaseReference ref, String formattedTime) {
+    String buttonText,
+    DatabaseReference ref,
+    String formattedTime,
+  ) {
     return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          ElevatedButton(
+          IconButton(
+            color: Color.fromARGB(255, 255, 0, 0),
             onPressed: () {
-              _selectTime(context, ref);
+              _selectTime(context as BuildContext, ref);
             },
-            child: Text(buttonText),
+            icon: Icon(Icons.access_time, size: 35),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 0),
           Text('$buttonText: $formattedTime'),
         ],
       ),
     );
-  }
-
-  Future<void> _selectTime(BuildContext context, DatabaseReference ref) async {
-    TimeOfDay? selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (selectedTime != null) {
-      String formattedTime =
-          '${selectedTime.hour}:${selectedTime.minute.toString().padLeft(2, '0')}';
-      ref.set(formattedTime);
-    }
   }
 }
