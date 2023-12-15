@@ -4,7 +4,6 @@ import 'package:new_page/setting.dart';
 import 'package:new_page/temperature.dart';
 import 'package:new_page/motor.dart';
 import 'package:new_page/light.dart';
-//import 'package:new_page/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -122,61 +121,91 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(''),
+        title: const Text('Smart Farm'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'settings') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Setting()),
+                );
+              }
+              if (value == 'TemperaState') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TemperaState()),
+                );
+              }
+              if (value == 'Motor') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Motor()),
+                );
+              }
+              if (value == 'Light') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Light()),
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem(
+                  value: 'settings',
+                  child: Row(
+                    children: [
+                      Icon(Icons.settings),
+                      SizedBox(width: 8),
+                      Text('Settings'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'TemperaState',
+                  child: Row(
+                    children: [
+                      Icon(Icons.thermostat),
+                      SizedBox(width: 8),
+                      Text('Temperature'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'Motor',
+                  child: Row(
+                    children: [
+                      Icon(Icons.motorcycle),
+                      SizedBox(width: 8),
+                      Text('Motor'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'Light',
+                  child: Row(
+                    children: [
+                      Icon(Icons.lightbulb),
+                      SizedBox(width: 8),
+                      Text('Light'),
+                    ],
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                color: const Color.fromARGB(255, 211, 211, 211),
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 100),
-                      child: const Center(
-                        child: Text(
-                          'Smart Farm',
-                          style: TextStyle(
-                            fontSize: 25,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 50),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Setting()));
-                            },
-                            icon: const Icon(
-                              Icons.settings,
-                              color: Colors.black,
-                              size: 36.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
           Column(
             children: [
               SizedBox(
+                width: MediaQuery.of(context).size.width * 0.98,
                 child: Column(
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width,
                       margin: const EdgeInsets.only(top: 5),
                       color: const Color.fromARGB(255, 209, 208, 208),
                       child: Row(
@@ -253,7 +282,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          _isListening ? Icons.mic : Icons.mic_none,
+                          _isListening ? Icons.pause : Icons.play_arrow,
                           color: _isListening ? Colors.white : null,
                         ),
                         const SizedBox(width: 8),
@@ -265,7 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Container(
                 color: const Color.fromARGB(255, 180, 180, 180),
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width * 0.98,
                 height: 30,
                 margin: EdgeInsets.all(5),
                 child: Column(
@@ -278,42 +307,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                child: Row(children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => TemperaState()),
-                      );
-                    },
-                    child: const Text('Temperature'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Motor()),
-                      );
-                    },
-                    child: const Text('Motor'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Light()),
-                      );
-                    },
-                    child: const Text('Light'),
-                  ),
-                ]),
               ),
             ],
           ),

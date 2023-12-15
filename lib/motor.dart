@@ -19,8 +19,8 @@ class _MotorState extends State<Motor> {
   @override
   void initState() {
     super.initState();
-    setSTRef = FirebaseDatabase.instance.ref().child('set_start_time');
-    setSPRef = FirebaseDatabase.instance.ref().child('set_stop_time');
+    setSTRef = FirebaseDatabase.instance.ref().child('Motor/set_start_time');
+    setSPRef = FirebaseDatabase.instance.ref().child('Motor/set_stop_time');
     setDev = FirebaseDatabase.instance.ref().child('Motor/Dev');
 
     setSTRef.onValue.listen((event) {

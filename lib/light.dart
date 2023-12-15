@@ -15,13 +15,16 @@ class _LightState extends State<Light> {
   late DatabaseReference getDev;
   String formattedStartTime = '';
   String formattedStopTime = '';
-
   String dataFromFirebase = '';
+  final bool _isSwitchOn = false;
+  final List<String> _items = [];
+  final List<bool> _itemSwitches = [];
+
   @override
   void initState() {
     super.initState();
-    setSTRef = FirebaseDatabase.instance.ref().child('set_start_time');
-    setSPRef = FirebaseDatabase.instance.ref().child('set_stop_time');
+    setSTRef = FirebaseDatabase.instance.ref().child('Light/set_start_time');
+    setSPRef = FirebaseDatabase.instance.ref().child('Light/set_stop_time');
     setDev = FirebaseDatabase.instance.ref().child('Light/Dev');
     getDev = FirebaseDatabase.instance.ref().child('Light/Dev');
 
@@ -72,17 +75,13 @@ class _LightState extends State<Light> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.only(left: 0),
+                margin: EdgeInsets.only(left: 150),
                 child: Column(
                   children: [
                     const Text('DevL'),
                     Switch(
                       value: switchValue,
                       onChanged: (value) {
-                        if (dataFromFirebase == '1') {
-                          stateService.switchValue = value;
-                          setDev.set(value ? 1 : 0);
-                        }
                         stateService.switchValue = value;
                         setDev.set(value ? 1 : 0);
                       },
@@ -92,11 +91,49 @@ class _LightState extends State<Light> {
                   ],
                 ),
               ),
+              Container(
+                margin: EdgeInsets.only(left: 100),
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        if (!_isSwitchOn) {
+                          setState(() {
+                            final ledName = 'Light ${_items.length + 1}';
+                            _items.add(ledName);
+                            _itemSwitches.add(false);
+                            setDev.child(ledName).set({
+                              'switchValue': 0,
+                            });
+                          });
+                        } else {}
+                      },
+                      child: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
+          for (int i = 0; i < _items.length; i++)
+            ListTile(
+              title: Text(_items[i]),
+              trailing: Switch(
+                value: _itemSwitches[i],
+                onChanged: (value) {
+                  setState(() {
+                    _itemSwitches[i] = value;
+                  });
+                  setDev.child(_items[i]).update({
+                    'switchValue': value ? 1 : 0,
+                  });
+                },
+              ),
+            ),
           buildTimeSettingButton(
               'Set Start Time', setSTRef, formattedStartTime),
           buildTimeSettingButton('Set Stop Time', setSPRef, formattedStopTime),
+          // สร้างปุ่ม Switch สำหรับแต่ละรายการ
         ],
       ),
     );

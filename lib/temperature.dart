@@ -19,8 +19,8 @@ class _TemperaState extends State<TemperaState> {
   @override
   void initState() {
     super.initState();
-    setSTRef = FirebaseDatabase.instance.ref().child('set_start_time');
-    setSPRef = FirebaseDatabase.instance.ref().child('set_stop_time');
+    setSTRef = FirebaseDatabase.instance.ref().child('Tem/set_start_time');
+    setSPRef = FirebaseDatabase.instance.ref().child('Tem/set_stop_time');
     setDev = FirebaseDatabase.instance.ref().child('Tem/Dev');
 
     setSTRef.onValue.listen((event) {
